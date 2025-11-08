@@ -17,7 +17,7 @@ Each method demonstrates different use cases, trade-offs, and implementation pat
 ### Backend (Server)
 - **Runtime**: Bun
 - **Framework**: Elysia
-- **Validation**: Zod
+- **Validation**: TypeBox (Elysia.t)
 - **Pattern**: Domain-Driven Design (DDD)
 - **Port**: 3000
 
@@ -166,7 +166,6 @@ app/
 │   ├── src/
 │   │   ├── domain/        # Domain entities and repositories
 │   │   ├── routes/        # API route handlers
-│   │   ├── schemas/       # Zod validation schemas
 │   │   └── index.ts       # Main server file
 │   ├── Dockerfile
 │   └── package.json
