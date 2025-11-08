@@ -9,7 +9,6 @@ export const PollingDemo = () => {
 	const [selectedStock, setSelectedStock] = useState<Stock | null>(null)
 
 	const {
-		data: _,
 		loading: stocksLoading,
 		requestCount: stocksRequestCount,
 	} = usePolling<StockPriceResponse>(
