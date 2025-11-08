@@ -110,6 +110,6 @@ export const useWebSocket = (
 		lastMessage,
 		connect,
 		disconnect,
-		sendMessage
+		sendMessage,
 	}
 }

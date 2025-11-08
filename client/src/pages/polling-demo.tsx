@@ -8,12 +8,8 @@ export const PollingDemo = () => {
 	const [stocks, setStocks] = useState<Stock[]>([])
 	const [selectedStock, setSelectedStock] = useState<Stock | null>(null)
 
-	const {
-		loading: stocksLoading,
-		requestCount: stocksRequestCount,
-	} = usePolling<StockPriceResponse>(
-		'http://localhost:3000/api/polling/stock',
-		{
+	const { loading: stocksLoading, requestCount: stocksRequestCount } =
+		usePolling<StockPriceResponse>('http://localhost:3000/api/polling/stock', {
 			interval: 10000, // 10s
 			enabled: true,
 			maxTime: 30000, // 30s
@@ -32,8 +28,7 @@ export const PollingDemo = () => {
 					}
 				}
 			},
-		},
-	)
+		})
 
 	return (
 		<div className="min-h-screen bg-gray-50 dark:bg-gray-900">
