@@ -1,10 +1,10 @@
 import { Elysia, t } from 'elysia'
+import { logger } from '..'
 import {
 	PaymentRepository,
 	PaymentStatus,
 	PaymentType,
 } from '../domain/payment'
-import { logger } from '..'
 
 const paymentRepo = new PaymentRepository()
 

@@ -76,7 +76,7 @@ export class StockRepository {
 	}
 
 	private async simulateDelay(): Promise<void> {
-		const delay = Bun.env.NODE_ENV === 'test' ? 0 : 6000;
+		const delay = Bun.env.NODE_ENV === 'test' ? 0 : 6000
 		return new Promise((resolve) => setTimeout(resolve, delay))
 	}
 }
