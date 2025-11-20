@@ -1,7 +1,7 @@
 import axios from 'axios'
 import type { CreatePaymentRequest } from '../schemas/payment'
 
-const API_BASE_URL = 'http://localhost:3000'
+export const API_BASE_URL = import.meta.env.API_BASE_URL
 
 export const api = axios.create({
 	baseURL: API_BASE_URL,
