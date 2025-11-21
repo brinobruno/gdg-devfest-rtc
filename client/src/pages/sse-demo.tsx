@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { StatusIndicator } from '../components/status-indicator'
 import { useSSE } from '../hooks/use-sse'
 import type { PaymentResponse } from '../schemas/payment'
-import { API_BASE_URL, sseApi } from '../utils/api'
+import { VITE_API_BASE_URL, sseApi } from '../utils/api'
 
 export const SSEDemo = () => {
 	const [payment, setPayment] = useState<PaymentResponse | null>(null)
@@ -13,7 +13,7 @@ export const SSEDemo = () => {
 	const { connectionState, eventCount, lastEvent, connect, disconnect } =
 		useSSE(
 			payment
-				? `${API_BASE_URL}/api/sse/payment/${payment.id}/stream`
+				? `${VITE_API_BASE_URL}/api/sse/payment/${payment.id}/stream`
 				: '',
 			{
 				onMessage: (data) => {

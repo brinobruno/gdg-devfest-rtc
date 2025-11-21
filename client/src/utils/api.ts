@@ -1,10 +1,10 @@
 import axios from 'axios'
 import type { CreatePaymentRequest } from '../schemas/payment'
 
-export const API_BASE_URL = import.meta.env.API_BASE_URL
+export const VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 export const api = axios.create({
-	baseURL: API_BASE_URL,
+	baseURL: VITE_API_BASE_URL,
 	headers: {
 		'Content-Type': 'application/json',
 	},
@@ -18,7 +18,7 @@ export const sseApi = {
 	createPayment: (data: CreatePaymentRequest) =>
 		api.post('/api/sse/payment', data),
 	getPaymentStream: (id: string) =>
-		new EventSource(`${API_BASE_URL}/api/sse/payment/${id}/stream`),
+		new EventSource(`${VITE_API_BASE_URL}/api/sse/payment/${id}/stream`),
 }
 
 export const websocketApi = {

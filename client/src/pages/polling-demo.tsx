@@ -1,7 +1,7 @@
 import { Activity, useState } from 'react'
 import { usePolling } from '../hooks/use-polling'
 import type { StockPriceResponse } from '../schemas/stock'
-import { API_BASE_URL } from '../utils/api'
+import { VITE_API_BASE_URL } from '../utils/api'
 
 type Stock = StockPriceResponse['data'][number]
 
@@ -10,7 +10,7 @@ export const PollingDemo = () => {
 	const [selectedStock, setSelectedStock] = useState<Stock | null>(null)
 
 	const { loading: stocksLoading, requestCount: stocksRequestCount } =
-		usePolling<StockPriceResponse>(`${API_BASE_URL}/api/polling/stock`, {
+		usePolling<StockPriceResponse>(`${VITE_API_BASE_URL}/api/polling/stock`, {
 			interval: 10000, // 10s
 			enabled: true,
 			maxTime: 30000, // 30s
