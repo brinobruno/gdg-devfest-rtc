@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { StatusIndicator } from '../components/status-indicator'
 import { useSSE } from '../hooks/use-sse'
 import type { PaymentResponse } from '../schemas/payment'
-import { VITE_API_BASE_URL, sseApi } from '../utils/api'
+import { sseApi, VITE_API_BASE_URL } from '../utils/api'
 
 export const SSEDemo = () => {
 	const [payment, setPayment] = useState<PaymentResponse | null>(null)
