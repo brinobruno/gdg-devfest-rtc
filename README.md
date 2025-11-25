@@ -75,7 +75,7 @@ bun run dev
 **Scenario**: Simulating a stock purchase with periodic status checks
 
 **How it works**:
-- Client polls the server every 2 seconds for payment status
+- Client polls the server every 10 seconds (configurable) for status
 - Server responds immediately with current state
 - Simple HTTP GET requests with JSON responses
 
@@ -159,17 +159,15 @@ WS   /api/websocket/payment/:id      # WebSocket connection
 ## 🛠️ Development
 
 ### Project Structure
-
 ```
-app/
-├── server/                # Elysia backend
+server/                    # Elysia backend
 │   ├── src/
 │   │   ├── domain/        # Domain entities and repositories
 │   │   ├── routes/        # API route handlers
 │   │   └── index.ts       # Main server file
 │   ├── Dockerfile
 │   └── package.json
-├── client/                # React frontend
+client/                    # React frontend
 │   ├── src/
 │   │   ├── components/    # Reusable UI components
 │   │   ├── hooks/         # Custom React hooks
@@ -179,8 +177,8 @@ app/
 │   │   └── App.tsx        # Main app component
 │   ├── Dockerfile
 │   └── package.json
-├── docker-compose.yml     # Service orchestration
-└── README.md
+docker-compose.yml         # Service orchestration
+README.md
 ```
 
 ### Key Features
