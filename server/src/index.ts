@@ -32,7 +32,9 @@ if (Bun.env.NODE_ENV !== 'test') {
 		`RTC API is running at ${app.server?.hostname}:${app.server?.port}`,
 	)
 	console.log(`📊 Available endpoints:`)
-	console.log(`   - Polling: http://localhost:3000/api/polling`)
-	console.log(`   - SSE: http://localhost:3000/api/sse`)
-	console.log(`   - WebSocket: ws://localhost:3000/api/websocket`)
+	console.log(`   - Polling:   GET  http://localhost:3000/api/polling/stock`)
+	console.log(`   - SSE:       POST http://localhost:3000/api/sse/payment`)
+	console.log(`                 GET  http://localhost:3000/api/sse/payment/:id/stream`)
+	console.log(`   - WebSocket: POST http://localhost:3000/api/websocket/payment`)
+	console.log(`                 WS   ws://localhost:3000/api/websocket/payment/:id`)
 }
