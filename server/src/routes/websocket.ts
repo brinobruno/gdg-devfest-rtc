@@ -64,79 +64,79 @@ export const websocketRoutes = new Elysia({ prefix: '/api/websocket' })
 			const { type, otp } = message as WebSocketMessage
 
 			try {
-				if (type === 'start_payment') {
+				const send = (payload: unknown) => ws.send(JSON.stringify(payload))
+				const getPaymentOrError = async () => {
 					const payment = await paymentRepo.getPayment(ws.data.params.id)
 					if (!payment) {
-						ws.send(
-							JSON.stringify({
-								type: 'error',
-								message: 'Payment not found',
-							}),
-						)
-						return
+						send({
+							type: 'error',
+							message: 'Payment not found',
+						})
+						return null
 					}
+					return payment
+				}
 
-					ws.send(
-						JSON.stringify({
+				const handlers: Record<string, () => Promise<void>> = {
+					start_payment: async () => {
+						const payment = await getPaymentOrError()
+						if (!payment) return
+
+						send({
 							type: 'status',
 							status: PaymentStatus.PROCESSING,
 							message: 'Processing credit card payment...',
 							timestamp: new Date().toISOString(),
-						}),
-					)
+						})
 
-					await paymentRepo.updatePaymentStatus(
-						ws.data.params.id,
-						PaymentStatus.PROCESSING,
-					)
+						await paymentRepo.updatePaymentStatus(
+							ws.data.params.id,
+							PaymentStatus.PROCESSING,
+						)
 
-					setTimeout(async () => {
-						const otpCode = Math.floor(
-							100000 + Math.random() * 900000,
-						).toString()
+						setTimeout(async () => {
+							const otpCode = Math.floor(
+								100000 + Math.random() * 900000,
+							).toString()
 
-						ws.send(
-							JSON.stringify({
+							send({
 								type: 'otp_sent',
 								status: PaymentStatus.OTP_SENT,
 								message: 'OTP sent to your registered mobile number',
 								otp: otpCode,
 								timestamp: new Date().toISOString(),
-							}),
-						)
+							})
 
-						await paymentRepo.updatePaymentStatus(
-							ws.data.params.id,
-							PaymentStatus.OTP_SENT,
-						)
+							await paymentRepo.updatePaymentStatus(
+								ws.data.params.id,
+								PaymentStatus.OTP_SENT,
+							)
 
-						;(ws.data as WebSocketContext).otp = otpCode
-					}, 6000)
-				} else if (type === 'verify_otp') {
-					const payment = await paymentRepo.getPayment(ws.data.params.id)
-					if (!payment) {
-						ws.send(
-							JSON.stringify({
+							;(ws.data as WebSocketContext).otp = otpCode
+						}, 6000)
+					},
+					verify_otp: async () => {
+						const payment = await getPaymentOrError()
+						if (!payment) return
+
+						const context = ws.data as WebSocketContext
+						const expectedOTP = context.otp
+						const isValid = otp === expectedOTP
+						if (!isValid) {
+							send({
 								type: 'error',
-								message: 'Payment not found',
-							}),
-						)
-						return
-					}
-
-					const context = ws.data as WebSocketContext
-					const expectedOTP = context.otp
-					const isValid = otp === expectedOTP
-
-					if (isValid) {
-						ws.send(
-							JSON.stringify({
-								type: 'status',
-								status: PaymentStatus.OTP_VERIFIED,
-								message: 'OTP verified successfully!',
+								message: 'Invalid OTP. Please try again.',
 								timestamp: new Date().toISOString(),
-							}),
-						)
+							})
+							return
+						}
+
+						send({
+							type: 'status',
+							status: PaymentStatus.OTP_VERIFIED,
+							message: 'OTP verified successfully!',
+							timestamp: new Date().toISOString(),
+						})
 
 						await paymentRepo.updatePaymentStatus(
 							ws.data.params.id,
@@ -149,42 +149,37 @@ export const websocketRoutes = new Elysia({ prefix: '/api/websocket' })
 								? PaymentStatus.COMPLETED
 								: PaymentStatus.FAILED
 
-							ws.send(
-								JSON.stringify({
-									type: 'status',
-									status: finalStatus,
-									message: success
-										? 'Payment completed successfully!'
-										: 'Payment failed - card declined',
-									timestamp: new Date().toISOString(),
-								}),
-							)
+							send({
+								type: 'status',
+								status: finalStatus,
+								message: success
+									? 'Payment completed successfully!'
+									: 'Payment failed - card declined',
+								timestamp: new Date().toISOString(),
+							})
 
 							await paymentRepo.updatePaymentStatus(
 								ws.data.params.id,
 								finalStatus,
 							)
 
-							ws.send(
-								JSON.stringify({
-									type: 'complete',
-									success,
-									timestamp: new Date().toISOString(),
-								}),
-							)
+							send({
+								type: 'complete',
+								success,
+								timestamp: new Date().toISOString(),
+							})
 
 							ws.close()
 						}, 6000)
-					} else {
-						ws.send(
-							JSON.stringify({
-								type: 'error',
-								message: 'Invalid OTP. Please try again.',
-								timestamp: new Date().toISOString(),
-							}),
-						)
-					}
+					},
 				}
+
+				const handler = handlers[type]
+				if (!handler) {
+					// Unknown/unsupported types are ignored.
+					return
+				}
+				await handler()
 			} catch (error) {
 				console.error('WebSocket error:', error)
 				ws.send(
