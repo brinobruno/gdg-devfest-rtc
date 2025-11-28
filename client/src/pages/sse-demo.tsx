@@ -1,5 +1,8 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { StatusIndicator } from '../components/status-indicator'
+import { ConnectionMetricsCard } from '../components/connection-metrics-card'
+import { TechnicalDetailsCard } from '../components/technical-details-card'
+import { SseEducationalContent } from './content/sse-educational-content'
 import { useSSE } from '../hooks/use-sse'
 import type { PaymentResponse } from '../schemas/payment'
 import { sseApi, VITE_API_BASE_URL } from '../utils/api'
@@ -51,6 +54,15 @@ export const SSEDemo = () => {
 				},
 			},
 		)
+
+		const connectionStateClass = useMemo(() => {
+			const classes: Record<string, string> = {
+				open: 'text-green-600 dark:text-green-400',
+				connecting: 'text-yellow-600 dark:text-yellow-400',
+				error: 'text-red-600 dark:text-red-400',
+			}
+			return classes[connectionState] ?? 'text-gray-600 dark:text-gray-400'
+		}, [connectionState])
 
 	const handlePayment = async () => {
 		setIsProcessing(true)
@@ -203,152 +215,42 @@ export const SSEDemo = () => {
 							)}
 						</div>
 
-						<div className="card">
-							<h3 className="text-lg font-semibold mb-3">
-								📊 Connection Metrics
-							</h3>
-							<div className="space-y-2 text-sm">
-								<div className="flex justify-between">
-									<span>Connection State:</span>
-									<span
-										className={`font-mono ${
-											connectionState === 'open'
-												? 'text-green-600 dark:text-green-400'
-												: connectionState === 'connecting'
-													? 'text-yellow-600 dark:text-yellow-400'
-													: connectionState === 'error'
-														? 'text-red-600 dark:text-red-400'
-														: 'text-gray-600 dark:text-gray-400'
-										}`}
-									>
-										{connectionState}
-									</span>
-								</div>
-								<div className="flex justify-between">
-									<span>Events Received:</span>
-									<span className="font-mono">{eventCount}</span>
-								</div>
-								<div className="flex justify-between">
-									<span>Last Event:</span>
-									<span className="font-mono text-xs">
-										{lastEvent &&
+						<ConnectionMetricsCard
+							title="📊 Connection Metrics"
+							rows={[
+								{
+									label: 'Connection State:',
+									value: connectionState,
+									valueClassName: connectionStateClass,
+								},
+								{ label: 'Events Received:', value: eventCount },
+								{
+									label: 'Last Event:',
+									value:
+										lastEvent &&
 										typeof lastEvent === 'object' &&
 										'timestamp' in lastEvent &&
-										typeof lastEvent.timestamp === 'string'
-											? new Date(lastEvent.timestamp).toLocaleTimeString()
-											: 'None'}
-									</span>
-								</div>
-							</div>
-						</div>
+										typeof (lastEvent as any).timestamp === 'string'
+											? new Date((lastEvent as any).timestamp).toLocaleTimeString()
+											: 'None',
+									valueClassName: 'text-xs',
+								},
+							]}
+						/>
 					</div>
 
 					<div className="space-y-6">
-						<div className="card">
-							<h3 className="text-lg font-semibold mb-3">
-								🎓 Educational Context
-							</h3>
-							<div className="space-y-4 text-sm">
-								<div>
-									<h4 className="font-semibold text-blue-600 dark:text-blue-400">
-										How SSE Works:
-									</h4>
-									<p className="text-gray-700 dark:text-gray-300">
-										Server-Sent Events create a persistent HTTP connection where
-										the server can push data to the client in real-time. The
-										client opens an EventSource connection and listens for
-										events.
-									</p>
-								</div>
-
-								<div>
-									<h4 className="font-semibold text-green-600 dark:text-green-400">
-										When to Use:
-									</h4>
-									<ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-1">
-										<li>One-way real-time updates</li>
-										<li>Live notifications</li>
-										<li>Progress tracking</li>
-										<li>Status updates</li>
-										<li>Live feeds and dashboards</li>
-									</ul>
-								</div>
-
-								<div>
-									<h4 className="font-semibold text-yellow-600 dark:text-yellow-400">
-										Pros:
-									</h4>
-									<ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-1">
-										<li>True real-time updates</li>
-										<li>Lower server load than polling</li>
-										<li>Automatic reconnection</li>
-										<li>Works through firewalls</li>
-										<li>Simple to implement</li>
-									</ul>
-								</div>
-
-								<div>
-									<h4 className="font-semibold text-red-600 dark:text-red-400">
-										Cons:
-									</h4>
-									<ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-1">
-										<li>One-way communication only</li>
-										<li>Limited browser support (older IE)</li>
-										<li>Connection limits per domain</li>
-										<li>No binary data support</li>
-									</ul>
-								</div>
-
-								<div>
-									<h4 className="font-semibold text-purple-600 dark:text-purple-400">
-										E-commerce Use Cases:
-									</h4>
-									<ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-1">
-										<li>PIX payment confirmations</li>
-										<li>Order status updates</li>
-										<li>Live inventory notifications</li>
-										<li>Real-time price changes</li>
-										<li>Payment processing updates</li>
-									</ul>
-								</div>
-							</div>
-						</div>
-
-						<div className="card">
-							<h3 className="text-lg font-semibold mb-3">
-								🔍 Technical Details
-							</h3>
-							<div className="space-y-2 text-xs font-mono bg-gray-50 dark:bg-gray-700 p-3 rounded">
-								<div>
-									<span className="text-blue-600 dark:text-blue-400">GET</span>{' '}
-									/api/sse/payment/:id/stream
-								</div>
-								<div>
-									<span className="text-gray-500 dark:text-gray-400">
-										Content-Type:
-									</span>{' '}
-									text/event-stream
-								</div>
-								<div>
-									<span className="text-gray-500 dark:text-gray-400">
-										Connection:
-									</span>{' '}
-									keep-alive
-								</div>
-								<div>
-									<span className="text-gray-500 dark:text-gray-400">
-										Cache-Control:
-									</span>{' '}
-									no-cache
-								</div>
-								<div>
-									<span className="text-gray-500 dark:text-gray-400">
-										Format:
-									</span>{' '}
-									data: {'{JSON}'}\n\n
-								</div>
-							</div>
-						</div>
+						<SseEducationalContent />
+						<TechnicalDetailsCard
+							badge={{ text: 'GET', className: 'text-blue-600 dark:text-blue-400' }}
+							endpoint="/api/sse/payment/:id/stream"
+							details={[
+								{ label: 'Content-Type', value: 'text/event-stream' },
+								{ label: 'Connection', value: 'keep-alive' },
+								{ label: 'Cache-Control', value: 'no-cache' },
+								{ label: 'Format', value: 'data: {JSON}\\n\\n' },
+							]}
+						/>
 					</div>
 				</div>
 			</div>

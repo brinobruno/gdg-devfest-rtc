@@ -1,5 +1,8 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { StatusIndicator } from '../components/status-indicator'
+import { ConnectionMetricsCard } from '../components/connection-metrics-card'
+import { TechnicalDetailsCard } from '../components/technical-details-card'
+import { WebSocketEducationalContent } from './content/web-socket-educational-content'
 import { useWebSocket } from '../hooks/use-web-socket'
 import type { PaymentResponse } from '../schemas/payment'
 import { websocketApi } from '../utils/api'
@@ -80,6 +83,15 @@ export const WebSocketDemo = () => {
 			},
 		},
 	)
+
+	const connectionStateClass = useMemo(() => {
+		const classes: Record<string, string> = {
+			open: 'text-green-600 dark:text-green-400',
+			connecting: 'text-yellow-600 dark:text-yellow-400',
+			error: 'text-red-600 dark:text-red-400',
+		}
+		return classes[connectionState] ?? 'text-gray-600 dark:text-gray-400'
+	}, [connectionState])
 
 	const handlePayment = async () => {
 		setIsProcessing(true)
@@ -278,157 +290,45 @@ export const WebSocketDemo = () => {
 							)}
 						</div>
 
-						<div className="card">
-							<h3 className="text-lg font-semibold mb-3">
-								📊 Connection Metrics
-							</h3>
-							<div className="space-y-2 text-sm">
-								<div className="flex justify-between">
-									<span>Connection State:</span>
-									<span
-										className={`font-mono ${
-											connectionState === 'open'
-												? 'text-green-600 dark:text-green-400'
-												: connectionState === 'connecting'
-													? 'text-yellow-600 dark:text-yellow-400'
-													: connectionState === 'error'
-														? 'text-red-600 dark:text-red-400'
-														: 'text-gray-600 dark:text-gray-400'
-										}`}
-									>
-										{connectionState}
-									</span>
-								</div>
-								<div className="flex justify-between">
-									<span>Messages Sent:</span>
-									<span className="font-mono">{messagesSent}</span>
-								</div>
-								<div className="flex justify-between">
-									<span>Messages Received:</span>
-									<span className="font-mono">{messagesReceived}</span>
-								</div>
-								<div className="flex justify-between">
-									<span>Last Message:</span>
-									<span className="font-mono text-xs">
-										{lastMessage &&
+						<ConnectionMetricsCard
+							title="📊 Connection Metrics"
+							rows={[
+								{
+									label: 'Connection State:',
+									value: connectionState,
+									valueClassName: connectionStateClass,
+								},
+								{ label: 'Messages Sent:', value: messagesSent },
+								{ label: 'Messages Received:', value: messagesReceived },
+								{
+									label: 'Last Message:',
+									value:
+										lastMessage &&
 										typeof lastMessage === 'object' &&
 										lastMessage !== null &&
 										'timestamp' in lastMessage &&
-										typeof lastMessage.timestamp === 'string'
-											? new Date(lastMessage.timestamp).toLocaleTimeString()
-											: 'None'}
-									</span>
-								</div>
-							</div>
-						</div>
+										typeof (lastMessage as any).timestamp === 'string'
+											? new Date((lastMessage as any).timestamp).toLocaleTimeString()
+											: 'None',
+									valueClassName: 'text-xs',
+								},
+							]}
+						/>
 					</div>
 
 					<div className="space-y-6">
-						<div className="card">
-							<h3 className="text-lg font-semibold mb-3">
-								🎓 Educational Context
-							</h3>
-							<div className="space-y-4 text-sm">
-								<div>
-									<h4 className="font-semibold text-blue-600 dark:text-blue-400">
-										How WebSockets Work:
-									</h4>
-									<p className="text-gray-700 dark:text-gray-300">
-										WebSockets establish a persistent, full-duplex connection
-										between client and server. Both sides can send messages at
-										any time without the overhead of HTTP headers.
-									</p>
-								</div>
+						<WebSocketEducationalContent />
 
-								<div>
-									<h4 className="font-semibold text-green-600 dark:text-green-400">
-										When to Use:
-									</h4>
-									<ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-1">
-										<li>Bidirectional real-time communication</li>
-										<li>Interactive applications</li>
-										<li>Collaborative tools</li>
-										<li>Gaming applications</li>
-										<li>Live chat systems</li>
-									</ul>
-								</div>
-
-								<div>
-									<h4 className="font-semibold text-yellow-600 dark:text-yellow-400">
-										Pros:
-									</h4>
-									<ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-1">
-										<li>True real-time bidirectional communication</li>
-										<li>Low latency</li>
-										<li>Efficient (no HTTP overhead)</li>
-										<li>Supports binary data</li>
-										<li>Persistent connection</li>
-									</ul>
-								</div>
-
-								<div>
-									<h4 className="font-semibold text-red-600 dark:text-red-400">
-										Cons:
-									</h4>
-									<ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-1">
-										<li>More complex to implement</li>
-										<li>Firewall/proxy issues</li>
-										<li>Connection state management</li>
-										<li>Higher resource usage</li>
-										<li>No automatic reconnection</li>
-									</ul>
-								</div>
-
-								<div>
-									<h4 className="font-semibold text-purple-600 dark:text-purple-400">
-										E-commerce Use Cases:
-									</h4>
-									<ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-1">
-										<li>OTP verification flows</li>
-										<li>Live customer support chat</li>
-										<li>Real-time bidding/auctions</li>
-										<li>Collaborative shopping carts</li>
-										<li>Live payment confirmations</li>
-									</ul>
-								</div>
-							</div>
-						</div>
-
-						<div className="card">
-							<h3 className="text-lg font-semibold mb-3">
-								🔍 Technical Details
-							</h3>
-							<div className="space-y-2 text-xs font-mono bg-gray-50 dark:bg-gray-700 p-3 rounded">
-								<div>
-									<span className="text-blue-600 dark:text-blue-400">WS</span>{' '}
-									ws://localhost:3000/api/websocket/payment/:id
-								</div>
-								<div>
-									<span className="text-gray-500 dark:text-gray-400">
-										Protocol:
-									</span>{' '}
-									WebSocket
-								</div>
-								<div>
-									<span className="text-gray-500 dark:text-gray-400">
-										Format:
-									</span>{' '}
-									JSON messages
-								</div>
-								<div>
-									<span className="text-gray-500 dark:text-gray-400">
-										Handshake:
-									</span>{' '}
-									HTTP Upgrade
-								</div>
-								<div>
-									<span className="text-gray-500 dark:text-gray-400">
-										Persistence:
-									</span>{' '}
-									Until closed
-								</div>
-							</div>
-						</div>
+						<TechnicalDetailsCard
+							badge={{ text: 'WS', className: 'text-blue-600 dark:text-blue-400' }}
+							endpoint="ws://localhost:3000/api/websocket/payment/:id"
+							details={[
+								{ label: 'Protocol', value: 'WebSocket' },
+								{ label: 'Format', value: 'JSON messages' },
+								{ label: 'Handshake', value: 'HTTP Upgrade' },
+								{ label: 'Persistence', value: 'Until closed' },
+							]}
+						/>
 					</div>
 				</div>
 			</div>

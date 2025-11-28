@@ -1,4 +1,7 @@
 import { Activity, useState } from 'react'
+import { ConnectionMetricsCard } from '../components/connection-metrics-card'
+import { TechnicalDetailsCard } from '../components/technical-details-card'
+import { PollingEducationalContent } from './content/polling-educational-content'
 import { usePolling } from '../hooks/use-polling'
 import type { StockPriceResponse } from '../schemas/stock'
 import { VITE_API_BASE_URL } from '../utils/api'
@@ -94,132 +97,35 @@ export const PollingDemo = () => {
 							</Activity>
 						</div>
 
-						<div className="card">
-							<h3 className="text-lg font-semibold mb-3">
-								📈 Connection Metrics
-							</h3>
-							<div className="space-y-2 text-sm">
-								<div className="flex justify-between">
-									<span>Stock Polling:</span>
-									<span
-										className={`font-mono ${stocksLoading ? 'text-blue-600 dark:text-blue-400' : 'text-green-600 dark:text-green-400'}`}
-									>
-										{stocksLoading ? 'Polling...' : 'Active'}
-									</span>
-								</div>
-								<div className="flex justify-between">
-									<span>Stock Requests:</span>
-									<span className="font-mono">{stocksRequestCount}</span>
-								</div>
-								<div className="flex justify-between">
-									<span>Stock Interval:</span>
-									<span className="font-mono">10s</span>
-								</div>
-								<div className="flex justify-between">
-									<span>Payment Interval:</span>
-									<span className="font-mono">3s</span>
-								</div>
-							</div>
-						</div>
+						<ConnectionMetricsCard
+							title="📈 Connection Metrics"
+							rows={[
+								{
+									label: 'Stock Polling:',
+									value: stocksLoading ? 'Polling...' : 'Active',
+									valueClassName: stocksLoading
+										? 'text-blue-600 dark:text-blue-400'
+										: 'text-green-600 dark:text-green-400',
+								},
+								{ label: 'Stock Requests:', value: stocksRequestCount },
+								{ label: 'Stock Interval:', value: '10s' },
+								{ label: 'Payment Interval:', value: '3s' },
+							]}
+						/>
 					</div>
 
 					<div className="space-y-6">
-						<div className="card">
-							<h3 className="text-lg font-semibold mb-3">
-								🎓 Educational Context
-							</h3>
-							<div className="space-y-4 text-sm">
-								<div>
-									<h4 className="font-semibold text-blue-600 dark:text-blue-400">
-										How Polling Works:
-									</h4>
-									<p className="text-gray-700 dark:text-gray-300">
-										The client repeatedly sends HTTP requests to the server at
-										regular intervals (every 3-10 seconds in this demo) to check
-										for updates. The server responds immediately with the
-										current state.
-									</p>
-								</div>
+						<PollingEducationalContent />
 
-								<div>
-									<h4 className="font-semibold text-green-600 dark:text-green-400">
-										When to Use:
-									</h4>
-									<ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-1">
-										<li>Simple, low-frequency updates</li>
-										<li>When real-time isn't critical</li>
-										<li>Stock prices, weather updates</li>
-										<li>Status checks that don't change often</li>
-									</ul>
-								</div>
-
-								<div>
-									<h4 className="font-semibold text-yellow-600 dark:text-yellow-400">
-										Pros:
-									</h4>
-									<ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-1">
-										<li>Simple to implement</li>
-										<li>Works with standard HTTP</li>
-										<li>No special server configuration</li>
-										<li>Easy to debug and monitor</li>
-									</ul>
-								</div>
-
-								<div>
-									<h4 className="font-semibold text-red-600 dark:text-red-400">
-										Cons:
-									</h4>
-									<ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-1">
-										<li>Higher server load (constant requests)</li>
-										<li>Not truly real-time</li>
-										<li>Wastes bandwidth when no updates</li>
-										<li>Can miss rapid changes between polls</li>
-									</ul>
-								</div>
-
-								<div>
-									<h4 className="font-semibold text-purple-600 dark:text-purple-400">
-										E-commerce Use Cases:
-									</h4>
-									<ul className="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-1">
-										<li>Order status updates (every few minutes)</li>
-										<li>Inventory level checks</li>
-										<li>Price monitoring</li>
-										<li>Simple notification systems</li>
-									</ul>
-								</div>
-							</div>
-						</div>
-
-						<div className="card">
-							<h3 className="text-lg font-semibold mb-3">
-								🔍 Technical Details
-							</h3>
-							<div className="space-y-2 text-xs font-mono bg-gray-50 dark:bg-gray-700 p-3 rounded">
-								<div>
-									<span className="text-blue-600 dark:text-blue-400">GET</span>{' '}
-									/api/polling/stock
-								</div>
-								<div>
-									<span className="text-gray-500 dark:text-gray-400">
-										Method:
-									</span>{' '}
-									HTTP GET
-								</div>
-								<div>
-									<span className="text-gray-500 dark:text-gray-400">
-										Response:
-									</span>{' '}
-									JSON
-								</div>
-								<div>
-									<span className="text-gray-500 dark:text-gray-400">
-										Headers:
-									</span>{' '}
-									Content-Type: application/json
-								</div>
-							</div>
-						</div>
+						<TechnicalDetailsCard
+							badge={{ text: 'GET', className: 'text-blue-600 dark:text-blue-400' }}
+							endpoint="/api/polling/stock"
+							details={[
+								{ label: 'Method', value: 'HTTP GET' },
+								{ label: 'Response', value: 'JSON' },
+								{ label: 'Headers', value: 'Content-Type: application/json' },
+							]}
+						/>
 					</div>
 				</div>
 			</div>
