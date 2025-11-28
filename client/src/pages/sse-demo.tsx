@@ -19,22 +19,24 @@ export const SSEDemo = () => {
 				onMessage: (data) => {
 					console.log('📡 SSE Demo: Received event', data)
 
-					if (typeof data === 'object' && data !== null && 'type' in data) {
-						const eventData = data as { type: string; status?: string }
+					if (typeof data !== 'object' || data === null || !('type' in data)) return
 
-						if (eventData.type === 'status' && 'status' in eventData) {
-							setPayment((prev) =>
-								prev ? { ...prev, status: eventData.status! } : null,
-							)
-						} else if (eventData.type === 'complete') {
-							setIsProcessing(false)
-							setTimeout(() => {
-								disconnect()
-							}, 1000)
-						} else if (eventData.type === 'error') {
-							setIsProcessing(false)
-							disconnect()
-						}
+					const { type, status } = data as { type: string; status?: string }
+
+					if (type === 'status' && 'status' in (data as any)) {
+						setPayment((prev) => (prev ? { ...prev, status: status! } : null))
+						return
+					}
+
+					if (type === 'complete') {
+						setIsProcessing(false)
+						setTimeout(disconnect, 1000)
+						return
+					}
+
+					if (type === 'error') {
+						setIsProcessing(false)
+						disconnect()
 					}
 				},
 				onError: (error) => {

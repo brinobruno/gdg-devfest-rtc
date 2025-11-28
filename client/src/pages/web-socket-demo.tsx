@@ -26,38 +26,46 @@ export const WebSocketDemo = () => {
 			onMessage: (data) => {
 				console.log('🔌 WebSocket Demo: Received message', data)
 
-				if (typeof data === 'object' && data !== null && 'type' in data) {
-					const eventData = data as {
-						type: string
-						status?: string
-						otp?: string
-					}
+				if (typeof data !== 'object' || data === null || !('type' in data)) return
 
-					if (eventData.type === 'connected') {
-						console.log('🔌 WebSocket Demo: Connected to server')
-					} else if (eventData.type === 'status' && 'status' in eventData) {
-						setPayment((prev) =>
-							prev ? { ...prev, status: eventData.status! } : null,
-						)
-					} else if (eventData.type === 'otp_sent') {
-						setShowOtpInput(true)
-						if ('status' in eventData) {
-							setPayment((prev) =>
-								prev ? { ...prev, status: eventData.status! } : null,
-							)
-						}
-						if ('otp' in eventData) {
-							console.log('🔌 WebSocket Demo: OTP sent:', eventData.otp)
-						}
-					} else if (eventData.type === 'complete') {
-						setIsProcessing(false)
-						setShowOtpInput(false)
-						disconnect()
-					} else if (eventData.type === 'error') {
-						setIsProcessing(false)
-						setShowOtpInput(false)
-						disconnect()
+				const { type, status, otp } = data as {
+					type: string
+					status?: string
+					otp?: string
+				}
+
+				if (type === 'connected') {
+					console.log('🔌 WebSocket Demo: Connected to server')
+					return
+				}
+
+				if (type === 'status' && 'status' in (data as any)) {
+					setPayment((prev) => (prev ? { ...prev, status: status! } : null))
+					return
+				}
+
+				if (type === 'otp_sent') {
+					setShowOtpInput(true)
+					if ('status' in (data as any)) {
+						setPayment((prev) => (prev ? { ...prev, status: status! } : null))
 					}
+					if ('otp' in (data as any)) {
+						console.log('🔌 WebSocket Demo: OTP sent:', otp)
+					}
+					return
+				}
+
+				if (type === 'complete') {
+					setIsProcessing(false)
+					setShowOtpInput(false)
+					disconnect()
+					return
+				}
+
+				if (type === 'error') {
+					setIsProcessing(false)
+					setShowOtpInput(false)
+					disconnect()
 				}
 			},
 			onError: (error) => {
