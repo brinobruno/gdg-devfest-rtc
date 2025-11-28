@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react'
-import { StatusIndicator } from '../components/status-indicator'
 import { ConnectionMetricsCard } from '../components/connection-metrics-card'
+import { StatusIndicator } from '../components/status-indicator'
 import { TechnicalDetailsCard } from '../components/technical-details-card'
-import { WebSocketEducationalContent } from './content/web-socket-educational-content'
 import { useWebSocket } from '../hooks/use-web-socket'
 import type { PaymentResponse } from '../schemas/payment'
 import { websocketApi } from '../utils/api'
+import { WebSocketEducationalContent } from './content/web-socket-educational-content'
 
 export const WebSocketDemo = () => {
 	const [payment, setPayment] = useState<PaymentResponse | null>(null)
@@ -29,7 +29,8 @@ export const WebSocketDemo = () => {
 			onMessage: (data) => {
 				console.log('🔌 WebSocket Demo: Received message', data)
 
-				if (typeof data !== 'object' || data === null || !('type' in data)) return
+				if (typeof data !== 'object' || data === null || !('type' in data))
+					return
 
 				const { type, status, otp } = data as {
 					type: string
@@ -308,7 +309,9 @@ export const WebSocketDemo = () => {
 										lastMessage !== null &&
 										'timestamp' in lastMessage &&
 										typeof (lastMessage as any).timestamp === 'string'
-											? new Date((lastMessage as any).timestamp).toLocaleTimeString()
+											? new Date(
+													(lastMessage as any).timestamp,
+												).toLocaleTimeString()
 											: 'None',
 									valueClassName: 'text-xs',
 								},
@@ -320,7 +323,10 @@ export const WebSocketDemo = () => {
 						<WebSocketEducationalContent />
 
 						<TechnicalDetailsCard
-							badge={{ text: 'WS', className: 'text-blue-600 dark:text-blue-400' }}
+							badge={{
+								text: 'WS',
+								className: 'text-blue-600 dark:text-blue-400',
+							}}
 							endpoint="ws://localhost:3000/api/websocket/payment/:id"
 							details={[
 								{ label: 'Protocol', value: 'WebSocket' },

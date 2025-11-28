@@ -8,8 +8,9 @@ export const WebSocketEducationalContent = () => {
 						How WebSockets Work:
 					</h4>
 					<p className="text-gray-700 dark:text-gray-300">
-						WebSockets establish a persistent, full-duplex connection between client and server.
-						Both sides can send messages at any time without the overhead of HTTP headers.
+						WebSockets establish a persistent, full-duplex connection between
+						client and server. Both sides can send messages at any time without
+						the overhead of HTTP headers.
 					</p>
 				</div>
 				<div>
@@ -64,4 +65,3 @@ export const WebSocketEducationalContent = () => {
 		</div>
 	)
 }
-

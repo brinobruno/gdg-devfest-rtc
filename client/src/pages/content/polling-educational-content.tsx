@@ -8,7 +8,9 @@ export const PollingEducationalContent = () => {
 						How Polling Works:
 					</h4>
 					<p className="text-gray-700 dark:text-gray-300">
-						The client repeatedly sends HTTP requests to the server at regular intervals (every 3-10 seconds in this demo) to check for updates. The server responds immediately with the current state.
+						The client repeatedly sends HTTP requests to the server at regular
+						intervals (every 3-10 seconds in this demo) to check for updates.
+						The server responds immediately with the current state.
 					</p>
 				</div>
 				<div>
@@ -59,4 +61,3 @@ export const PollingEducationalContent = () => {
 		</div>
 	)
 }
-

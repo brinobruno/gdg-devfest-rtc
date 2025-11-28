@@ -34,7 +34,13 @@ if (Bun.env.NODE_ENV !== 'test') {
 	console.log(`📊 Available endpoints:`)
 	console.log(`   - Polling:   GET  http://localhost:3000/api/polling/stock`)
 	console.log(`   - SSE:       POST http://localhost:3000/api/sse/payment`)
-	console.log(`                 GET  http://localhost:3000/api/sse/payment/:id/stream`)
-	console.log(`   - WebSocket: POST http://localhost:3000/api/websocket/payment`)
-	console.log(`                 WS   ws://localhost:3000/api/websocket/payment/:id`)
+	console.log(
+		`                 GET  http://localhost:3000/api/sse/payment/:id/stream`,
+	)
+	console.log(
+		`   - WebSocket: POST http://localhost:3000/api/websocket/payment`,
+	)
+	console.log(
+		`                 WS   ws://localhost:3000/api/websocket/payment/:id`,
+	)
 }

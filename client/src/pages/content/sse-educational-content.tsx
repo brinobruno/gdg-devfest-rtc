@@ -8,7 +8,9 @@ export const SseEducationalContent = () => {
 						How SSE Works:
 					</h4>
 					<p className="text-gray-700 dark:text-gray-300">
-						Server-Sent Events create a persistent HTTP connection where the server can push data to the client in real-time. The client opens an EventSource connection and listens for events.
+						Server-Sent Events create a persistent HTTP connection where the
+						server can push data to the client in real-time. The client opens an
+						EventSource connection and listens for events.
 					</p>
 				</div>
 				<div>
@@ -62,4 +64,3 @@ export const SseEducationalContent = () => {
 		</div>
 	)
 }
-

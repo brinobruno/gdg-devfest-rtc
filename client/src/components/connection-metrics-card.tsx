@@ -11,7 +11,10 @@ type ConnectionMetricsCardProps = {
 	rows: MetricsRow[]
 }
 
-export const ConnectionMetricsCard = ({ title = '📊 Connection Metrics', rows }: ConnectionMetricsCardProps) => {
+export const ConnectionMetricsCard = ({
+	title = '📊 Connection Metrics',
+	rows,
+}: ConnectionMetricsCardProps) => {
 	return (
 		<div className="card">
 			<h3 className="text-lg font-semibold mb-3">{title}</h3>
@@ -19,11 +22,12 @@ export const ConnectionMetricsCard = ({ title = '📊 Connection Metrics', rows 
 				{rows.map((row, idx) => (
 					<div className="flex justify-between" key={`${row.label}-${idx}`}>
 						<span>{row.label}</span>
-						<span className={`font-mono ${row.valueClassName ?? ''}`}>{row.value}</span>
+						<span className={`font-mono ${row.valueClassName ?? ''}`}>
+							{row.value}
+						</span>
 					</div>
 				))}
 			</div>
 		</div>
 	)
 }
-

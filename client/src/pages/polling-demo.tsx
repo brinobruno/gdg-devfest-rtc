@@ -1,10 +1,10 @@
 import { Activity, useState } from 'react'
 import { ConnectionMetricsCard } from '../components/connection-metrics-card'
 import { TechnicalDetailsCard } from '../components/technical-details-card'
-import { PollingEducationalContent } from './content/polling-educational-content'
 import { usePolling } from '../hooks/use-polling'
 import type { StockPriceResponse } from '../schemas/stock'
 import { VITE_API_BASE_URL } from '../utils/api'
+import { PollingEducationalContent } from './content/polling-educational-content'
 
 type Stock = StockPriceResponse['data'][number]
 
@@ -118,7 +118,10 @@ export const PollingDemo = () => {
 						<PollingEducationalContent />
 
 						<TechnicalDetailsCard
-							badge={{ text: 'GET', className: 'text-blue-600 dark:text-blue-400' }}
+							badge={{
+								text: 'GET',
+								className: 'text-blue-600 dark:text-blue-400',
+							}}
 							endpoint="/api/polling/stock"
 							details={[
 								{ label: 'Method', value: 'HTTP GET' },

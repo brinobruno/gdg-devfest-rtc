@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react'
-import { StatusIndicator } from '../components/status-indicator'
 import { ConnectionMetricsCard } from '../components/connection-metrics-card'
+import { StatusIndicator } from '../components/status-indicator'
 import { TechnicalDetailsCard } from '../components/technical-details-card'
-import { SseEducationalContent } from './content/sse-educational-content'
 import { useSSE } from '../hooks/use-sse'
 import type { PaymentResponse } from '../schemas/payment'
 import { sseApi, VITE_API_BASE_URL } from '../utils/api'
+import { SseEducationalContent } from './content/sse-educational-content'
 
 export const SSEDemo = () => {
 	const [payment, setPayment] = useState<PaymentResponse | null>(null)
@@ -22,7 +22,8 @@ export const SSEDemo = () => {
 				onMessage: (data) => {
 					console.log('📡 SSE Demo: Received event', data)
 
-					if (typeof data !== 'object' || data === null || !('type' in data)) return
+					if (typeof data !== 'object' || data === null || !('type' in data))
+						return
 
 					const { type, status } = data as { type: string; status?: string }
 
@@ -55,14 +56,14 @@ export const SSEDemo = () => {
 			},
 		)
 
-		const connectionStateClass = useMemo(() => {
-			const classes: Record<string, string> = {
-				open: 'text-green-600 dark:text-green-400',
-				connecting: 'text-yellow-600 dark:text-yellow-400',
-				error: 'text-red-600 dark:text-red-400',
-			}
-			return classes[connectionState] ?? 'text-gray-600 dark:text-gray-400'
-		}, [connectionState])
+	const connectionStateClass = useMemo(() => {
+		const classes: Record<string, string> = {
+			open: 'text-green-600 dark:text-green-400',
+			connecting: 'text-yellow-600 dark:text-yellow-400',
+			error: 'text-red-600 dark:text-red-400',
+		}
+		return classes[connectionState] ?? 'text-gray-600 dark:text-gray-400'
+	}, [connectionState])
 
 	const handlePayment = async () => {
 		setIsProcessing(true)
@@ -231,7 +232,9 @@ export const SSEDemo = () => {
 										typeof lastEvent === 'object' &&
 										'timestamp' in lastEvent &&
 										typeof (lastEvent as any).timestamp === 'string'
-											? new Date((lastEvent as any).timestamp).toLocaleTimeString()
+											? new Date(
+													(lastEvent as any).timestamp,
+												).toLocaleTimeString()
 											: 'None',
 									valueClassName: 'text-xs',
 								},
@@ -242,7 +245,10 @@ export const SSEDemo = () => {
 					<div className="space-y-6">
 						<SseEducationalContent />
 						<TechnicalDetailsCard
-							badge={{ text: 'GET', className: 'text-blue-600 dark:text-blue-400' }}
+							badge={{
+								text: 'GET',
+								className: 'text-blue-600 dark:text-blue-400',
+							}}
 							endpoint="/api/sse/payment/:id/stream"
 							details={[
 								{ label: 'Content-Type', value: 'text/event-stream' },
